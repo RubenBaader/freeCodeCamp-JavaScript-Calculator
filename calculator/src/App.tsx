@@ -6,29 +6,39 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="calculator">
+      <div id='display'> {count} </div>
+      <div className='numbers'>
+        <button id='zero'    > 0 </button>
+        <button id='one'     > 1 </button>
+        <button id='two'     > 2 </button>
+        <button id='three'   > 3 </button>
+        <button id='four'    > 4 </button>
+        <button id='five'    > 5 </button>
+        <button id='six'     > 6 </button>
+        <button id='seven'   > 7 </button>
+        <button id='eight'   > 8 </button>
+        <button id='nine'    > 9 </button>
+        <button id='decimal' > . </button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className='operations'>
+        <button id='clear'   > AC </button>
+        <button id='add'     > + </button>
+        <button id='subtract'> - </button>
+        <button id='multiply'> * </button>
+        <button id='divide'  > / </button>
+        <button id='equals'  > = </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
+
+
+
+
+
+
+
+
 
 export default App
