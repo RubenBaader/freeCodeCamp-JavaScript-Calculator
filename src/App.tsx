@@ -16,23 +16,26 @@ import './App.css'
 //             => setDisplay(result)
 
 function App() {
-  // const [count, setCount] = useState(0)
-  const [display, setdisplay] = useState<string>("0")
+  const [display,   setdisplay  ] = useState<string>("0")
+  const [lastInput, setLastInput] = useState<string>("")
 
   const handleInput = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const button = e.target as HTMLButtonElement
-    const input = button.innerText
+    const button = e.target as HTMLButtonElement;
+    const input  = button.innerText;
     // console.log(button.innerText)
 
     if (display == "0" && input != ".")
       setdisplay(input);
     else
-    setdisplay(display + input)
+      setdisplay(display + input);
+
+    setLastInput(input);
   }
 
   const handleClear = () => {
     // clear state
-    setdisplay("0")
+    setdisplay("0");
+    setLastInput("");
   }
 
   const handleCalc = () => {
