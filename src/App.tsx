@@ -16,30 +16,33 @@ import './App.css'
 //             => setDisplay(result)
 
 function App() {
-  const [display,   setdisplay  ] = useState<string>("0")
+  const [display,   setDisplay  ] = useState<string>("0")
   const [lastInput, setLastInput] = useState<string>("")
 
   const handleInput = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.target as HTMLButtonElement;
     const input  = button.innerText;
-    // console.log(button.innerText)
+    
+    const OPERANDS: string[] = ["+", "-", "/", "*"];
 
-    if (display == "0" && input != ".")
-      setdisplay(input);
+    if (display == "0" && input != "." && !OPERANDS.includes(input))
+      setDisplay(input);
+    else if (OPERANDS.includes(input)  && OPERANDS.includes(lastInput))
+      setDisplay(display.slice(0, -1) + input);
     else
-      setdisplay(display + input);
+      setDisplay(display + input);
 
     setLastInput(input);
   }
 
   const handleClear = () => {
-    // clear state
-    setdisplay("0");
+    setDisplay  ("0");
     setLastInput("");
   }
 
   const handleCalc = () => {
     // eval(state);
+    setDisplay(eval(display));
   }
 
   return (
