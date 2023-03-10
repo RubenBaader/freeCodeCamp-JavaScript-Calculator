@@ -14,6 +14,12 @@ import './App.css'
 // input     :  str = "1+2+5-3*4"
 //   eval(str) => num result 
 //             => setDisplay(result)
+//  chunk input=> lastChunk = e.g. "+42"
+//             => "=" evaluates combined state + lastChunk, adds lastChunk to combined state
+
+// Let's chunk the state - each operator divides the input into a new chunk
+//    => allows ops on only current chunk - decimal numbers, sign change?
+// Combine all chunks in display -- keep user abreast of state
 
 function App() {
   const [display,   setDisplay  ] = useState<string>("0")
@@ -24,7 +30,9 @@ function App() {
     const input  = button.innerText;
     
     const OPERANDS: string[] = ["+", "-", "/", "*"];
-
+    // const OP_REGEX: RegExp = /\+|\-|\/|\*/                     // <= last resort
+    if (input   == "." && lastInput == ".")           // current chunk contains "." ? return : continue
+      return;
     if (display == "0" && input != "." && !OPERANDS.includes(input))
       setDisplay(input);
     else if (OPERANDS.includes(input)  && OPERANDS.includes(lastInput))
