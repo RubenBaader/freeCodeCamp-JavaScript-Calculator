@@ -17,39 +17,68 @@ import './App.css'
 //  chunk input=> lastChunk = e.g. "+42"
 //             => "=" evaluates combined state + lastChunk, adds lastChunk to combined state
 
-// Let's chunk the state - each operator divides the input into a new chunk
-//    => allows ops on only current chunk - decimal numbers, sign change?
-// Combine all chunks in display -- keep user abreast of state
+// input flow:
+//   start chunk
+//   filter valid inputs on chunk
+//   add sanitized chunk to state, start new chunk
 
 function App() {
-  const [display,   setDisplay  ] = useState<string>("0")
-  const [lastInput, setLastInput] = useState<string>("")
+  const [ display,      setDisplay      ] = useState<string>("0");
+  const [ lastInput,    setLastInput    ] = useState<string>("");
+  const [ currentChunk, setCurrentChunk ] = useState<string>("");
+  // data flow:
+  // Press button
+  //  Capture input value
+  //  Validate input
+  //  Add to calculation data
+  
+  const initializeChunk = () => {
+    // if input is operand, start new chunk
+  }
+  const sanitizeChunk = (operandArr : string[], input : string) => {
+    /* if (OPERANDS.includes(input)) {              // also handle OPERAND + "-" as negative number
+      // commit latest chunk (if !empty) to storage
+      // initiate new chunk in state
+      // add input to chunk
+    } */
+  }
+  const commitChunk = () => {
+    // send chunk to state
+  }
 
   const handleInput = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const button = e.target as HTMLButtonElement;
-    const input  = button.innerText;
+    const BUTTON = e.target as HTMLButtonElement;
+    const INPUT  = BUTTON.innerText;
     
     const OPERANDS: string[] = ["+", "-", "/", "*"];
-    // const OP_REGEX: RegExp = /\+|\-|\/|\*/                     // <= last resort
-    if (input   == "." && lastInput == ".")           // current chunk contains "." ? return : continue
-      return;
-    if (display == "0" && input != "." && !OPERANDS.includes(input))
-      setDisplay(input);
-    else if (OPERANDS.includes(input)  && OPERANDS.includes(lastInput))
-      setDisplay(display.slice(0, -1) + input);
-    else
-      setDisplay(display + input);
+    const OP_REGEX: RegExp   = /\+|\-|\/|\*/;
 
-    setLastInput(input);
+
+    // 
+
+    if (INPUT   == "." && currentChunk.includes("."))           // current chunk contains "." ? return : continue
+      return;
+
+    if (display == "0" && INPUT != "." && !OPERANDS.includes(INPUT))
+      setDisplay(INPUT);
+    else if (OPERANDS.includes(INPUT)  && OPERANDS.includes(lastInput))
+      setDisplay(display.slice(0, -1) + INPUT);
+    else
+      setDisplay(display + INPUT);
+
+    setLastInput(INPUT);
   }
 
   const handleClear = () => {
-    setDisplay  ("0");
-    setLastInput("");
+    setDisplay     ("0");
+    setLastInput   ("");
+    setCurrentChunk("");
   }
 
   const handleCalc = () => {
-    // eval(state);
+    // eval(state+chunk);
+    // setState(state+chunk);
+    // this means pressing "=" again repeats the operation in currentChunk
     setDisplay(eval(display));
   }
 
