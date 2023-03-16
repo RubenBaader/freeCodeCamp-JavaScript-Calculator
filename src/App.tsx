@@ -23,24 +23,73 @@ import './App.css'
 //   add sanitized chunk to state, start new chunk
 
 function App() {
-  const [ display,      setDisplay      ] = useState<string>("0");
+  const [ calc,         setCalc         ] = useState<string>("");
   const [ lastInput,    setLastInput    ] = useState<string>("");
-  const [ currentChunk, setCurrentChunk ] = useState<string>("");
+  const [ currentChunk, setCurrentChunk ] = useState<string>("0");
   // data flow:
   // Press button
   //  Capture input value
   //  Validate input
   //  Add to calculation data
   
-  const initializeChunk = () => {
-    // if input is operand, start new chunk
+/*   lastIn	currIn  currIn..
+      	       +	    -	      *	      /	      .
+      +	    replace	replace	replace	replace	"+0."
+      -	    replace	  "+"	  replace	replace	"-0."
+      *	    replace	  "*-"	replace	replace	"*0."
+      /	    replace	  "/-"	replace	replace	"/0."
+      .	    ignore	ignore	ignore	ignore	ignore
+ */
+  
+  const sanitizeInput = (input : string) => {
+    // validate input according to filter
+    
+    // do not allow leading double zeros
+    const num : RegExp = /[0-9]/
+    // console.log(num.test(input))
+    if (currentChunk == "0" && num.test(input)) {
+      setCurrentChunk(input);
+      return;
+    }
+    // filter according to last input
+      const OPERANDS: string[] =          ["+", "-", "/", "*"];
+    // Default case: Replace last operand with new operand
+    if (OPERANDS.includes(lastInput) && ["+",      "/", "*"].includes(input)) {
+      setCurrentChunk(currentChunk.slice(0,-1) + input);
+      return;
+    }
+    // "-" is special - creates negative numbers
+    if (lastInput == "-" && input == "-") {
+      setCurrentChunk(currentChunk.slice(0,-1) + "+");
+      return;
+    }
+    if (["/", "*"].includes(lastInput) && input == "-") {
+      setCurrentChunk(currentChunk + input);
+      return;
+    }
+    if (lastInput == "+" && input == "-") {
+      setCurrentChunk(currentChunk + input);
+      return;
+    }
+
+    // Decimal (".") creates decimal numbers
+    if (OPERANDS.includes(lastInput) && input == ".") {
+      setCurrentChunk(currentChunk + "0" + input);
+      return;
+    }
+    // check for multiple "." in chunk
+    if (currentChunk.includes(".") && input == ".")
+      return;
+    // add input to chunk
+    else
+      setCurrentChunk(currentChunk + input);
+
+    setLastInput(input);
   }
-  const sanitizeChunk = (operandArr : string[], input : string) => {
-    /* if (OPERANDS.includes(input)) {              // also handle OPERAND + "-" as negative number
-      // commit latest chunk (if !empty) to storage
-      // initiate new chunk in state
-      // add input to chunk
-    } */
+  const newChunk = () => {
+    // if input is operand, start new chunk
+    setCalc(calc+currentChunk);
+    setCurrentChunk("");
   }
   const commitChunk = () => {
     // send chunk to state
@@ -53,38 +102,38 @@ function App() {
     const OPERANDS: string[] = ["+", "-", "/", "*"];
     const OP_REGEX: RegExp   = /\+|\-|\/|\*/;
 
-
-    // 
-
+    sanitizeInput(INPUT);
+/* 
     if (INPUT   == "." && currentChunk.includes("."))           // current chunk contains "." ? return : continue
       return;
 
-    if (display == "0" && INPUT != "." && !OPERANDS.includes(INPUT))
-      setDisplay(INPUT);
+    if (calc == "0" && INPUT != "." && !OPERANDS.includes(INPUT))
+      setCalc(INPUT);
     else if (OPERANDS.includes(INPUT)  && OPERANDS.includes(lastInput))
-      setDisplay(display.slice(0, -1) + INPUT);
+      setCalc(calc.slice(0, -1) + INPUT);
     else
-      setDisplay(display + INPUT);
+      setCalc(calc + INPUT);
 
-    setLastInput(INPUT);
+    setLastInput(INPUT); */
   }
 
   const handleClear = () => {
-    setDisplay     ("0");
+    setCalc        ("");
     setLastInput   ("");
-    setCurrentChunk("");
+    setCurrentChunk("0");
   }
 
   const handleCalc = () => {
     // eval(state+chunk);
     // setState(state+chunk);
     // this means pressing "=" again repeats the operation in currentChunk
-    setDisplay(eval(display));
+    setCalc(eval(calc + currentChunk));
   }
 
   return (
     <div className="calculator">
-      <div id='display' > {display} </div>
+      <div id='display' > CALC: {calc} CHUNK: {currentChunk} </div>
+      {/* <div id='display' > {calc + currentChunk} </div> */}
       <div className='numbers'>
         <button id='zero'     onClick={ handleInput }> 0 </button>
         <button id='one'      onClick={ handleInput }> 1 </button>
